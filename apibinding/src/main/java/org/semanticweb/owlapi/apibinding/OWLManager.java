@@ -15,6 +15,7 @@ package org.semanticweb.owlapi.apibinding;
 import static org.semanticweb.owlapi.util.OWLAPIPreconditions.verifyNotNull;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 
 import org.semanticweb.owlapi.OWLAPIParsersModule;
 import org.semanticweb.owlapi.OWLAPIServiceLoaderModule;
@@ -40,9 +41,14 @@ import com.google.inject.Injector;
 public class OWLManager implements OWLOntologyManagerFactory {
 
     private static final long serialVersionUID = 40000L;
-    private static final Injector INJECTOR = Guice.createInjector(
-            new OWLAPIImplModule(), new OWLAPIParsersModule(),
-            new OWLAPIOBOModule(), new OWLAPIServiceLoaderModule());
+
+    private static Injector createInjector() {
+        return Guice.createInjector(
+                new OWLAPIImplModule(),
+                new OWLAPIParsersModule(),
+                new OWLAPIOBOModule(),
+                new OWLAPIServiceLoaderModule());
+    }
 
     @Override
     public OWLOntologyManager get() {
@@ -57,9 +63,9 @@ public class OWLManager implements OWLOntologyManagerFactory {
      */
     @Nonnull
     public static OWLOntologyManager createOWLOntologyManager() {
-        OWLOntologyManager instance = INJECTOR
-                .getInstance(OWLOntologyManager.class);
-        INJECTOR.injectMembers(instance);
+        Injector injector = createInjector();
+        OWLOntologyManager instance = injector.getInstance(OWLOntologyManager.class);
+        injector.injectMembers(instance);
         return verifyNotNull(instance);
     }
 
@@ -70,13 +76,13 @@ public class OWLManager implements OWLOntologyManagerFactory {
      */
     @Nonnull
     public static OWLDataFactory getOWLDataFactory() {
-        return verifyNotNull(INJECTOR.getInstance(OWLDataFactory.class));
+        return verifyNotNull(createInjector().getInstance(OWLDataFactory.class));
     }
 
     /**
      * @return an initialized manchester syntax parser for parsing strings
      */
     public static ManchesterOWLSyntaxParser createManchesterParser() {
-        return INJECTOR.getInstance(ManchesterOWLSyntaxParser.class);
+        return createInjector().getInstance(ManchesterOWLSyntaxParser.class);
     }
 }
