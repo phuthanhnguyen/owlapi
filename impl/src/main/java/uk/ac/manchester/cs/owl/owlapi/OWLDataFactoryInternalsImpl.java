@@ -24,6 +24,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.inject.Inject;
+
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.util.WeakIndexCache;
 import org.slf4j.Logger;
@@ -91,7 +93,8 @@ public class OWLDataFactoryInternalsImpl extends OWLDataFactoryInternalsImplNoCa
      * @param useCompression
      *        true if literals should be compressed
      */
-    public OWLDataFactoryInternalsImpl(boolean useCompression) {
+    @Inject
+    public OWLDataFactoryInternalsImpl(@CompressionEnabled boolean useCompression) {
         super(useCompression);
         classesByURI = buildCache();
         objectPropertiesByURI = buildCache();

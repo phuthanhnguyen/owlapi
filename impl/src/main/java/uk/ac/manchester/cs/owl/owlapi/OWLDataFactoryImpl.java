@@ -60,39 +60,20 @@ public class OWLDataFactoryImpl implements OWLDataFactory, Serializable,
     @Nonnull private static final OWLDataProperty        OWL_TOP_DATA_PROPERTY        = new OWLDataPropertyImpl(       OWLRDFVocabulary.OWL_TOP_DATA_PROPERTY.getIRI());
     @Nonnull private static final OWLDataProperty        OWL_BOTTOM_DATA_PROPERTY     = new OWLDataPropertyImpl(       OWLRDFVocabulary.OWL_BOTTOM_DATA_PROPERTY.getIRI());
     //@formatter:on
-    protected OWLDataFactoryInternals dataFactoryInternals;
 
-    public boolean isCachingEnabled() {
-        return cachingEnabled;
-    }
 
-    public boolean isCompressionEnabled() {
-        return compressionEnabled;
-    }
-
-    private boolean cachingEnabled;
-    private boolean compressionEnabled;
-
-    /** default constructor */
-    public OWLDataFactoryImpl() {
-        this(true, false);
-    }
+    private final OWLDataFactoryInternals dataFactoryInternals;
 
     /**
-     * @param cachingEnabled
-     *        true if objects should be cached
-     * @param compressionEnabled
-     *        true if literals should be compressed
+     * Constructs an OWLDataFactoryImpl that uses caching but no compression.
      */
+    public OWLDataFactoryImpl() {
+        this(new OWLDataFactoryInternalsImpl(false));
+    }
+
     @Inject
-    public OWLDataFactoryImpl(@CachingEnabled boolean cachingEnabled, @CompressionEnabled boolean compressionEnabled) {
-        this.cachingEnabled = cachingEnabled;
-        this.compressionEnabled = compressionEnabled;
-        if (this.cachingEnabled) {
-            dataFactoryInternals = new OWLDataFactoryInternalsImpl(this.compressionEnabled);
-        } else {
-            dataFactoryInternals = new OWLDataFactoryInternalsImplNoCache(this.compressionEnabled);
-        }
+    public OWLDataFactoryImpl(OWLDataFactoryInternals dataFactoryInternals) {
+        this.dataFactoryInternals = verifyNotNull(dataFactoryInternals);
     }
 
     @Override
