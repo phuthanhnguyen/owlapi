@@ -1204,9 +1204,10 @@ public class OWLOntologyManagerImpl implements OWLOntologyManager, OWLOntologyFa
         readLock.lock();
         try {
             try {
-                for (OWLStorerFactory storer : ontologyStorers) {
-                    if (storer.getFormatFactory().getKey().equals(ontologyFormat.getKey())) {
-                        storer.get().storeOntology(ontology, documentIRI, ontologyFormat);
+                for (OWLStorerFactory storerFactory : ontologyStorers) {
+                    OWLStorer storer = storerFactory.createStorer();
+                    if (storer.canStoreOntology(ontologyFormat)) {
+                        storer.storeOntology(ontology, documentIRI, ontologyFormat);
                         return;
                     }
                 }
@@ -1250,12 +1251,11 @@ public class OWLOntologyManagerImpl implements OWLOntologyManager, OWLOntologyFa
                              OWLOntologyDocumentTarget documentTarget) throws OWLOntologyStorageException {
         readLock.lock();
         try {
-            String formatKey = ontologyFormat.getKey();
             try {
-                for (OWLStorerFactory storer : ontologyStorers) {
-                    String key = storer.getFormatFactory().getKey();
-                    if (key.equals(formatKey)) {
-                        storer.get().storeOntology(ontology, documentTarget, ontologyFormat);
+                for (OWLStorerFactory storerFactory : ontologyStorers) {
+                    OWLStorer storer = storerFactory.createStorer();
+                    if (storer.canStoreOntology(ontologyFormat)) {
+                        storer.storeOntology(ontology, documentTarget, ontologyFormat);
                         return;
                     }
                 }
